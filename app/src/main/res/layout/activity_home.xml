@@ -15,7 +15,7 @@
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
@@ -64,11 +64,10 @@
         //recycler view
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="560dp"
             android:id="@+id/recycler_home">
 
         </androidx.recyclerview.widget.RecyclerView>
-
 
 
 
@@ -80,12 +79,28 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="bottom|end"
-            android:layout_margin="15dp"
+            android:layout_marginBottom="55dp"
+            android:layout_marginEnd="10dp"
             android:clickable="true"
             app:fabSize="normal"
             android:src="@drawable/ic_add"
             android:background="@drawable/oval_shape" />
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:background="?android:attr/windowBackground"
+            android:foreground="?attr/selectableItemBackground"
+            app:itemBackground="@color/colorPrimary"
+            app:itemIconTint="@android:color/white"
+            app:itemTextColor="@android:color/white"
+            app:menu="@menu/navigation" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    //bottom navigation
+
 
 </LinearLayout>

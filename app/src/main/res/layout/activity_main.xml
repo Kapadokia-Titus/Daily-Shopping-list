@@ -16,30 +16,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Log in"
+                android:layout_margin="20dp"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@android:color/white" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:background="@drawable/white_background"
+                android:background="@drawable/white_rect"
                 android:padding="10dp"
 
                 android:id="@+id/email_login"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
                 android:hint="Password "
-                android:background="@drawable/white_background"
+                android:background="@drawable/white_below"
                 android:padding="10dp"
                 android:inputType="textPassword"
                 android:id="@+id/password_login" />

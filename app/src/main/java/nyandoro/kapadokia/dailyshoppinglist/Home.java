@@ -1,12 +1,14 @@
 package nyandoro.kapadokia.dailyshoppinglist;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,12 +19,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,8 +46,11 @@ public class Home extends AppCompatActivity {
     //casting our toolbar
     private Toolbar toolbar;
 
+
     //implementing our recycler view
     private RecyclerView recyclerView;
+
+    private ActionBar tool;
 
     //declarations
     private FloatingActionButton fab_btn;
@@ -64,6 +71,9 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        tool = getSupportActionBar();
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemReselectedListener(onNavigationItemReselectedListener);
 
         totalsum = findViewById(R.id.total_ammount);
         toolbar = findViewById(R.id.home_toolbar);
@@ -138,51 +148,59 @@ public class Home extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mType = type.getText().toString().trim();
-                String mAmmount = ammount.getText().toString().trim();
-                String mNote = note.getText().toString().trim();
 
-                //set our ammount to integer
-                int amount =  Integer.parseInt(mAmmount);
 
-                //checking if the fields are empty
-                if (TextUtils.isEmpty(mType)){
-                    type.setError("Required field");
-                    return;
+                 addShoppingList();
+
+
+    }
+
+    private void addShoppingList() {
+
+
+        String mType = type.getText().toString().trim();
+        String mAmmount = ammount.getText().toString().trim();
+        String mNote = note.getText().toString().trim();
+
+        //set our amount to integer
+        int amount =  Integer.parseInt(mAmmount);
+
+        //checking if the fields are empty
+        if (TextUtils.isEmpty(mType)){
+            type.setError("Required field");
+            return;
+        }
+        if (TextUtils.isEmpty(mAmmount)){
+            ammount.setError("Required");
+            return;
+        }
+        if (TextUtils.isEmpty(mNote)){
+            note.setError("Required");
+            return;
+        }
+
+        //an object of our module class
+
+        String id = reference.push().getKey();
+        String date = DateFormat.getDateInstance().format(new Date());
+        Data data = new Data(mType, amount, mNote, date, id);
+        reference.child(id).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(Home.this, "Data added", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(Home.this, "error posting your data", Toast.LENGTH_SHORT).show();
                 }
-                if (TextUtils.isEmpty(mAmmount)){
-                    ammount.setError("Required");
-                    return;
-                }
-                if (TextUtils.isEmpty(mNote)){
-                    note.setError("Required");
-                    return;
-                }
-
-
-                if (!TextUtils.isEmpty(mType) && !TextUtils.isEmpty(mAmmount) && !TextUtils.isEmpty(mNote)){
-                    //an object of our module class
-
-                    String id = reference.push().getKey();
-                    String date = DateFormat.getDateInstance().format(new Date());
-                    Data data = new Data(mType, amount, mNote, date, id);
-                    reference.child(id).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                Toast.makeText(Home.this, "Data added", Toast.LENGTH_SHORT).show();
-                            }else {
-                                Toast.makeText(Home.this, "error posting your data", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
-                }
-
-
-
-                dialog.dismiss();
             }
+        });
+
+
+
+
+
+        dialog.dismiss();
+    }
         });
         dialog.show();
 
@@ -327,6 +345,7 @@ public class Home extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -340,7 +359,48 @@ public class Home extends AppCompatActivity {
                 mAuth.signOut();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
+
+            case R.id.share:
+                shareInformation();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void shareInformation() {
+
+
+        //sharing implementation here
+        Intent shareIntent = new Intent( android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Daily shopping list");
+        shareIntent.putExtra("type",type);
+        startActivity(Intent.createChooser(shareIntent,"share via"));
+
+    }
+
+
+    //bottom navigation
+    private BottomNavigationView.OnNavigationItemReselectedListener onNavigationItemReselectedListener = new
+            BottomNavigationView.OnNavigationItemReselectedListener() {
+                @Override
+                public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
+                    Fragment fragment;
+                    switch (menuItem.getItemId()){
+                        case R.id.home:
+
+                            return;
+                        case R.id.search:
+
+                            return;
+                        case R.id.profile:
+
+                            return;
+
+
+                    }
+
+                }
+            };
+
 }
